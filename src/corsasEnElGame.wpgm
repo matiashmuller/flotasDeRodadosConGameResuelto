@@ -1,0 +1,34 @@
+import wollok.game.*
+import rodados.*
+
+program corsasEnElGame {
+	const corsa1 = new ChevroletCorsa(position=game.center())	
+	
+	/*Configuración del tablero*/
+	game.height(15)
+	game.width(15)
+	
+	/*Agregado del título al tablero*/
+	game.title("Autitos")
+	
+	/*Agregado de la instancia al juego*/
+	game.addVisual(corsa1)
+	
+	/*Movimientos de los Corsa*/
+	keyboard.right().onPressDo{ corsa1.moverDerecha() }
+	keyboard.left().onPressDo{ corsa1.moverIzquierda() } 
+	keyboard.up().onPressDo{ corsa1.moverArriba() }
+	keyboard.down().onPressDo{ corsa1.moverAbajo() }
+	
+	/*Cambio de color de los Corsa*/
+	keyboard.r().onPressDo{ corsa1.image("autitorojo.png") }
+	keyboard.v().onPressDo{ corsa1.image("autitoverde.png") }
+	keyboard.a().onPressDo{ corsa1.image("autitoazul.png") }
+
+	/*Salir del juego*/
+	keyboard.s().onPressDo{ game.stop() }
+	
+	
+	game.start()
+		
+}
