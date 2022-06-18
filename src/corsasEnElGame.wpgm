@@ -2,7 +2,19 @@ import wollok.game.*
 import rodados.*
 
 program corsasEnElGame {
-	const corsa1 = new ChevroletCorsa(position=game.center())	
+	const corsa1 = new ChevroletCorsa(position=game.center())
+	const corsa2 = new ChevroletCorsa(position=game.origin())	
+	const corsa3 = new ChevroletCorsa(position=game.at(2,3))
+	
+	const todosLosAutitos = [corsa1, corsa2, corsa3]
+	
+	const pared1 = new Pared()
+	const paredDebil = new Pared(resistencia = 7, position= game.at(13,12))
+	
+	const paredes = [pared1, paredDebil]
+	
+	var autoActivo = corsa1
+	var modoTodos = false
 	
 	/*Configuración del tablero*/
 	game.height(15)
@@ -13,18 +25,61 @@ program corsasEnElGame {
 	
 	/*Agregado de la instancia al juego*/
 	game.addVisual(corsa1)
+	game.addVisual(corsa2)
+	game.addVisual(corsa3)
+	game.addVisual(pared1)
+	game.addVisual(paredDebil)
+	
+	// Elegir modo
+	keyboard.m().onPressDo { modoTodos = !modoTodos }
+	
+	// Elegir auto activo
+	keyboard.num1().onPressDo{ autoActivo = corsa1 }
+	keyboard.num2().onPressDo{ autoActivo = corsa2 }
+	keyboard.num3().onPressDo{ autoActivo = corsa3 }
 	
 	/*Movimientos de los Corsa*/
-	keyboard.right().onPressDo{ corsa1.moverDerecha() }
-	keyboard.left().onPressDo{ corsa1.moverIzquierda() } 
-	keyboard.up().onPressDo{ corsa1.moverArriba() }
-	keyboard.down().onPressDo{ corsa1.moverAbajo() }
+	keyboard.right().onPressDo{ 
+		if(!modoTodos) {autoActivo.moverDerecha()}
+		else {
+			todosLosAutitos.forEach{ a => a.moverDerecha() }
+		}
+	}
+	keyboard.left().onPressDo{
+		if(!modoTodos) {autoActivo.moverIzquierda()}
+		else {
+			todosLosAutitos.forEach{ a => a.moverIzquierda() }
+		} 
+	} 
+	keyboard.up().onPressDo{
+		if(!modoTodos) {autoActivo.moverArriba()}
+		else {
+			todosLosAutitos.forEach{ a => a.moverArriba() }
+		}
+	}
+	keyboard.down().onPressDo{if(!modoTodos) {autoActivo.moverAbajo()}
+		else {
+			todosLosAutitos.forEach{ a => a.moverAbajo() }
+		}
+	}
 	
 	/*Cambio de color de los Corsa*/
-	keyboard.r().onPressDo{ corsa1.image("autitorojo.png") }
-	keyboard.v().onPressDo{ corsa1.image("autitoverde.png") }
-	keyboard.a().onPressDo{ corsa1.image("autitoazul.png") }
-
+	keyboard.r().onPressDo{ autoActivo.image("autitorojo.png") }
+	keyboard.v().onPressDo{ autoActivo.image("autitoverde.png") }
+	keyboard.a().onPressDo{ autoActivo.image("autitoazul.png") }
+	
+	// Choques -- Completar este, el auto sigue avanzando al chocar
+	
+	game.onCollideDo(
+		autoActivo, { pared => 
+			if(pared.resistencia()<1) game.removeVisual(pared)
+			else {
+			autoActivo.chocar(pared)
+			autoActivo.cambiarPosicion(autoActivo.posicionesVisitadas().last())
+			}
+		}
+	)
+	
 	/*Salir del juego*/
 	keyboard.s().onPressDo{ game.stop() }
 	

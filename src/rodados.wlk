@@ -4,7 +4,7 @@ import wollok.game.*
 class ChevroletCorsa {
 	var property image = "autitorojo.png"
 	var property position 
-	const property posicionesVisitadas = #{}
+	const property posicionesVisitadas = []
 	
 	method capacidad() { return 4 }
 	method velocidadMaxima() { return 150 }
@@ -29,6 +29,9 @@ class ChevroletCorsa {
 	method moverArriba() { self.cambiarPosicion(self.position().up(1)) }
 	method moverAbajo() { self.cambiarPosicion(self.position().down(1)) }
 	
+	method chocar(pared) {
+		pared.sufrirChoque()
+	}
 }
 
 
@@ -81,5 +84,14 @@ object motorBataton {
 }
 
 
-
+class Pared {
+	var property image = "pared.png"
+	var property position = game.at(8,3)
+	var property resistencia = 10
+	
+	method sufrirChoque() {
+		resistencia -= 1
+		if(resistencia<6) image = "paredRota.png"
+	}
+}
 
